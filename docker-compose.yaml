@@ -1,0 +1,32 @@
+version: '3'
+services:
+  tutorial-service-dev:
+    container_name: tutorial-service-dev
+    build:
+      context: .
+      dockerfile: ./database/dev.Dockerfile
+    ports:
+      - "5050:5050"
+    environment:
+      - PG_DB=tutorial-service
+      - PG_USER=tutorial-service
+      - PG_PASSWORD=tutorial-service
+      - PG_HOST=postgres-db-dev
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+    depends_on:
+      - postgres-db-dev
+      
+  postgres-db-dev:
+    container_name: postgres-db-dev
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=tutorial-service
+      - POSTGRES_USER=tutorial-service
+      - POSTGRES_PASSWORD=tutorial-service
+    volumes:
+      - ./database/*DEV.sql:/docker-entrypoint-initdb.d
